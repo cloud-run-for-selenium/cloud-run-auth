@@ -1,0 +1,21 @@
+{
+  "name": "selrun",
+  "version": "0.0.1",
+  "description": "A CLI tool to broker authentication between the gcloud SDK and a Cloud Run service/Heroku service running in a browser",
+  "main": "selrun",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gcloud",
+    "heroku",
+    "cloud",
+    "run",
+    "docker"
+  ],
+  "author": "jamesmortensen",
+  "license": "MIT"
+}

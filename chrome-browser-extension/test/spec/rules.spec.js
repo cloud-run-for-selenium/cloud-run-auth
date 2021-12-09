@@ -1,0 +1,232 @@
+
+(function () {
+
+    function generateTestArrayOfSize(size) {
+        const arr = [];
+        for (var i = 97; i < size + 97; i++) {
+            const chars = String.fromCharCode(i) + String.fromCharCode(i) + String.fromCharCode(i) + '---';
+            arr.push(chars);
+        }
+        return arr;
+    }
+
+    // function being tested
+    function generateGroups(revisionUrls) {
+        return rulesModule.generateGroups(revisionUrls);
+    }
+
+    describe('RevisionURL Grouping Tests', () => {
+        it('should return only one group for arr.len = 6', function () {
+            const arr = generateTestArrayOfSize(6);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(1);
+        });
+
+        it('should return only one group for arr.len = 8', function () {
+            const arr = generateTestArrayOfSize(8);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(1);
+        });
+
+        it('should return only one group for arr.len = 1', function () {
+            const arr = generateTestArrayOfSize(1);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(1);
+        });
+
+        it('should return two groups for arr.len = 9', function () {
+            const arr = generateTestArrayOfSize(9);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(2);
+        });
+
+        it('should return two groups for arr.len = 11', function () {
+            const arr = generateTestArrayOfSize(11);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(2);
+        });
+
+        it('should return two groups for arr.len = 15', function () {
+            const arr = generateTestArrayOfSize(15);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(2);
+        });
+
+        it('should return two groups for arr.len = 16', function () {
+            const arr = generateTestArrayOfSize(16);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(2);
+        });
+
+        it('should return two groups for arr.len = 17', function () {
+            const arr = generateTestArrayOfSize(17);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(3);
+        });
+
+        it('should return two groups for arr.len = 23', function () {
+            const arr = generateTestArrayOfSize(23);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(3);
+        });
+
+        it('should return two groups for arr.len = 24', function () {
+            const arr = generateTestArrayOfSize(24);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(3);
+        });
+
+        it('should return two groups for arr.len = 25', function () {
+            const arr = generateTestArrayOfSize(25);
+            const groups = generateGroups(arr);
+            console.log(groups);
+            expect(groups.length).toEqual(4);
+        });
+    });
+
+
+    describe('Tests for building dynamic rules', function () {
+
+        it('should build a single Dynamic Rule with 6 revision urls', function () {
+            const whitelist = {};
+            whitelist['test.com'] = generateTestArrayOfSize(6);
+            console.log(whitelist);
+            expect(whitelist['test.com']).toContain('aaa---');
+            expect(whitelist['test.com']).toContain('fff---');
+
+            const rules = rulesModule.generateDynamicRules(whitelist);
+            expect(rules.length).toEqual(1);
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---)+test.com');
+            expect(rules[0].id).toEqual(1);
+        });
+
+        it('should build a single Dynamic Rule with 8 revision urls', function () {
+            const whitelist = {};
+            whitelist['test.com'] = generateTestArrayOfSize(8);
+            console.log(whitelist);
+            expect(whitelist['test.com']).toContain('aaa---');
+            expect(whitelist['test.com']).toContain('hhh---');
+
+            const rules = rulesModule.generateDynamicRules(whitelist);
+            expect(rules.length).toEqual(1);
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---)+test.com');
+            expect(rules[0].id).toEqual(1);
+        });
+
+
+        it('should build two Dynamic Rules for the same url with 8 revision urls and 6 revision urls', function () {
+            const whitelist = {};
+            whitelist['test.com'] = generateTestArrayOfSize(14);
+            //whitelist['example.com'] = generateArray(6);
+            console.log(whitelist);
+            expect(whitelist['test.com']).toContain('aaa---');
+            expect(whitelist['test.com']).toContain('hhh---');
+            expect(whitelist['test.com']).toContain('ggg---');
+            expect(whitelist['test.com']).toContain('nnn---');
+
+            const rules = rulesModule.generateDynamicRules(whitelist);
+            expect(rules.length).toEqual(2);
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---)+test.com');
+            expect(rules[0].id).toEqual(1);
+            expect(rules[1].condition.regexFilter).toEqual('.*://(?:iii---|jjj---|kkk---|lll---|mmm---|nnn---)+test.com');
+            expect(rules[1].id).toEqual(2);
+        });
+
+        it('should build three Dynamic Rules for the same url with 8, 8, and 6 revision urls', function () {
+            const whitelist = {};
+            whitelist['test.com'] = generateTestArrayOfSize(22);
+            //whitelist['example.com'] = generateArray(6);
+            console.log(whitelist);
+            expect(whitelist['test.com']).toContain('aaa---');
+            expect(whitelist['test.com']).toContain('hhh---');
+            expect(whitelist['test.com']).toContain('ggg---');
+            expect(whitelist['test.com']).toContain('nnn---');
+
+            const rules = rulesModule.generateDynamicRules(whitelist);
+            expect(rules.length).toEqual(3);
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---)+test.com');
+            expect(rules[0].id).toEqual(1);
+            expect(rules[1].condition.regexFilter).toEqual('.*://(?:iii---|jjj---|kkk---|lll---|mmm---|nnn---|ooo---|ppp---)+test.com');
+            expect(rules[1].id).toEqual(2);
+            expect(rules[2].condition.regexFilter).toEqual('.*://(?:qqq---|rrr---|sss---|ttt---|uuu---|vvv---)+test.com');
+            expect(rules[2].id).toEqual(3);
+        });
+
+        it('should build three Dynamic Rules for the same url with 8, 6, revision urls and a different url', function () {
+            const whitelist = {};
+            whitelist['test.com'] = generateTestArrayOfSize(14);
+            whitelist['example.com'] = [''];
+            //whitelist['example.com'] = generateArray(6);
+            console.log(whitelist);
+            expect(whitelist['test.com']).toContain('aaa---');
+            expect(whitelist['test.com']).toContain('hhh---');
+            expect(whitelist['test.com']).toContain('ggg---');
+            expect(whitelist['test.com']).toContain('nnn---');
+            expect(whitelist['example.com'].length).toEqual(1);
+
+            const rules = rulesModule.generateDynamicRules(whitelist);
+            expect(rules.length).toEqual(3);
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---)+test.com');
+            expect(rules[0].id).toEqual(1);
+            expect(rules[1].condition.regexFilter).toEqual('.*://(?:iii---|jjj---|kkk---|lll---|mmm---|nnn---)+test.com');
+            expect(rules[1].id).toEqual(2);
+            expect(rules[2].condition.regexFilter).toEqual('.*://(?:)+example.com');
+            expect(rules[2].id).toEqual(3);
+        });
+
+        it('should build three Dynamic Rules for the same url with 8, 6, revision urls and a different url and then locate the 2nd one', function () {
+            const whitelist = {};
+            whitelist['test.com'] = generateTestArrayOfSize(14);
+            whitelist['example.com'] = [''];
+            //whitelist['example.com'] = generateArray(6);
+            console.log(whitelist);
+            expect(whitelist['test.com']).toContain('aaa---');
+            expect(whitelist['test.com']).toContain('hhh---');
+            expect(whitelist['test.com']).toContain('ggg---');
+            expect(whitelist['test.com']).toContain('nnn---');
+            expect(whitelist['example.com'].length).toEqual(1);
+
+            const rules = rulesModule.generateDynamicRules(whitelist);
+            expect(rules.length).toEqual(3);
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---)+test.com');
+            expect(rules[0].id).toEqual(1);
+            expect(rules[1].condition.regexFilter).toEqual('.*://(?:iii---|jjj---|kkk---|lll---|mmm---|nnn---)+test.com');
+            expect(rules[1].id).toEqual(2);
+            expect(rules[2].condition.regexFilter).toEqual('.*://(?:)+example.com');
+            expect(rules[2].id).toEqual(3);
+
+            const tokens = {
+                'example.com': { value: 'reallyfake' }
+            }
+            const dynamicRules = rulesModule.generateDynamicRules(whitelist, 'googletoken');
+            console.log(dynamicRules);
+            const newRules = dynamicRules.map((rule) => {
+                const entries = Object.entries(tokens);
+                return entries.map((entry) => {
+                    if (rule.condition.regexFilter.includes(entry[0])) {
+                        rule.action.requestHeaders[0].value = 'Bearer ' + entry[1].value;
+                    }
+                    return rule;
+                })[0];
+            });
+            console.log(newRules);
+            console.log(newRules[0].action.requestHeaders[0].value);
+            console.log(newRules[1].action.requestHeaders[0].value);
+            console.log(newRules[2].action.requestHeaders[0].value);
+        });
+    });
+
+
+
+
+})();

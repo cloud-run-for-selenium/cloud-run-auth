@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+
+const args = require('./services/args');
+
+
+if (args.getHelpArgument(process.argv))
+    require('./services/help')
+
+
+if (args.has('--start')) {
+    console.log('Start the auth-server...');
+    require('./services/auth-server');
+}
+
+if (args.has('--stop')) {
+    console.log('Stop the auth-server...');
+}
+
+if (args.has('--add-url')) {
+    const url = args.get('--add-url');
+    console.log('Add ' + url);
+    const urls = require('./services/urls');
+    urls.add(url);
+}
+
+if (args.has('--remove-url')) {
+    const url = args.get('--remove-url');
+    console.log('REmove ' + url);
+    const urls = require('./services/urls');
+    urls.remove(url);
+}
+
+if (args.has('--show-urls')) {
+    console.log('Whitelisted URLs: ');
+    const urls = require('./services/urls');
+    console.log(urls.getAll());
+}
+
+if (args.has('--edit-url') && args.has('--add-revision')) {
+    const url = args.get('--edit-url');
+    const rev = args.get('--add-revision');
+    if (!url || !rev)
+        throw new Error('Must include URL to add revision to after --edit-url and the revision after --add-revision');
+    console.log('Add revision to url');
+    const urls = require('./services/urls');
+    urls.addRevision(url, rev);
+}
+
+if (args.has('--edit-url') && args.has('--remove-revision')) {
+    const url = args.get('--edit-url');
+    const rev = args.get('--remove-revision');
+    if (!url || !rev)
+        throw new Error('Must include URL to add revision to after --edit-url and the revision after --add-revision');
+    console.log('Remove revision from url');
+    const urls = require('./services/urls');
+    urls.removeRevision(url, rev);
+}
+
+if (args.has('--edit-url') && args.has('--add-token')) {
+    const url = args.get('--edit-url');
+    const token = args.get('--add-token');
+    if (!url || !token)
+        throw new Error('Must include URL to add token to after --edit-url and the token after --add-token');
+    console.log('added token for ' + url);
+    const tokenMod = require('./services/token');
+    tokenMod.add(url, token);
+}
+

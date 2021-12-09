@@ -1,0 +1,11 @@
+# CLI
+cli/keys/*
+cli/tests/generated-test-data/*
+
+# Chrome Browser Extension
+chrome-browser-extension/node_modules
+chrome-browser-extension/dist
+
+
+# Misc
+*.DS_Store*
