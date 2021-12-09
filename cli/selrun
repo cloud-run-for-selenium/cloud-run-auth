@@ -18,6 +18,8 @@ if (args.has('--stop')) {
 
 if (args.has('--add-url')) {
     const url = args.get('--add-url');
+    if (url === '' || url.substr(0, 2) === '--')
+        throw new Error('Invalid url. --add-url must be followed by a valid url.');
     console.log('Add ' + url);
     const urls = require('./services/urls');
     urls.add(url);
@@ -25,7 +27,9 @@ if (args.has('--add-url')) {
 
 if (args.has('--remove-url')) {
     const url = args.get('--remove-url');
-    console.log('REmove ' + url);
+    if (url === '' || url.substr(0, 2) === '--')
+        throw new Error('Invalid url. --remove-url must be followed by a valid url.');
+    console.log('Remove ' + url);
     const urls = require('./services/urls');
     urls.remove(url);
 }
@@ -66,3 +70,7 @@ if (args.has('--edit-url') && args.has('--add-token')) {
     tokenMod.add(url, token);
 }
 
+if (args.hasNoMatchingArguments()) {
+    console.warn('No matching arguments provided. See --help for instructions:');
+    require('./services/help');
+}

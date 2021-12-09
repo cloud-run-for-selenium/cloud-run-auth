@@ -2,6 +2,8 @@
 
 class Args {
 
+    checkedArgs = [];
+
     constructor(argsArr) {
         if (argsArr === undefined)
             throw new Error('Must pass process.argv to the Args constructor...');
@@ -14,6 +16,7 @@ class Args {
     }
 
     has(arg) {
+        this.checkedArgs.push(arg);
         return this.argsArr.includes(arg);
     }
 
@@ -27,6 +30,14 @@ class Args {
                 acc = elem;
             return acc;
         }, defaultValue);
+    }
+
+    hasNoMatchingArguments() {
+        return this.checkedArgs.reduce((acc, arg, index, arr) => {
+            if(this.argsArr.includes(arg))
+                acc = false;
+            return acc;
+        }, true);
     }
 }
 
