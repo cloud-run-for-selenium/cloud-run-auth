@@ -15,15 +15,21 @@ $ ./selrun --add-url my-secure-cloud-service.herokuapp.com
 To add the ACCESS_TOKEN, copy it from your Heroku Config Vars and replace the variable below with the token:
 
 ```
-$ ./selrun
+$ ./selrun --edit-url my-secure-cloud-service.herokuapp.com --add-token ${ACCESS_TOKEN_HERE}
+```
 
 ### Start the CLI Webserver
 
-In order for the browser extension to retrieve a 
+Start the CLI webserver so the extension can update tokens and whitelisted URLs as needed.
 
-For usage information, change to the CLI directory, and run `./selrun`.
+```
+$ ./selrun --start
+```
+
+To terminate, press CTRL-C.
 
 
+For more usage information, change to the CLI directory, and run `./selrun`.
 
 
 ## Installing the browser extension
@@ -34,3 +40,5 @@ For usage information, change to the CLI directory, and run `./selrun`.
 - In the file dialog box, select the chrome-browser-extension folder from this repository.
 
 The extension's auth mechanism is off by default. To enable it, click the extension icon in the top right of the browser. The banner text will change from OFF to ON.
+
+Once enabled, visit `https://my-secure-cloud-service.herokuapp.com` (replace with your own Heroku URL) and you should be able to access the content.
