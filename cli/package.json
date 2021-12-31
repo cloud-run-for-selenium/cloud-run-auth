@@ -17,5 +17,6 @@
     "docker"
   ],
   "author": "jamesmortensen",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {}
 }

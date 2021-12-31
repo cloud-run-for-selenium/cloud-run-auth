@@ -73,6 +73,8 @@ importScripts('rules.js');
     }
 
     function generateDynamicRules(ruleData) {
+        if(ruleData.tokens === undefined || ruleData.tokens === null)
+            ruleData.tokens = {};
         const dynamicRules = rulesModule.generateDynamicRules(ruleData.whitelist, ruleData.token.value);
         return dynamicRules.map((rule) => {
             const entries = Object.entries(ruleData.tokens);
