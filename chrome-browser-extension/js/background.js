@@ -24,12 +24,12 @@ importScripts('rules.js');
     const triggers = {};
 
     triggers['periodic_token_refresh'] = () => {
-        chrome.storage.local.get(['token', 'badgeProps', 'whitelist'], async (storage) => {
+        chrome.storage.local.get(['token', 'badgeProps', 'whitelist', 'tokens'], async (storage) => {
             if (storage.badgeProps.text === 'ON') {
                 if (weShouldRequestNewToken(storage.token)) {
                     // get new token and update dynamic rule
-                    const newToken = await requestIdentityToken();
-                    await updateAuthorizationDynamicRule({ token: newToken, whitelist: storage.whitelist, tokens: storage.tokens });
+                    const freshDataFromAuthServer = await requestIdentityToken();
+                    await updateAuthorizationDynamicRule(freshDataFromAuthServer);
                 }
             }
         });
@@ -63,6 +63,8 @@ importScripts('rules.js');
     async function updateAuthorizationDynamicRule(ruleData) {
         //console.log('add identity token to dynamic rule using token ' + token.value)
         const dynamicRules = generateDynamicRules(ruleData);
+        // console.debug(ruleData);
+        // console.debug(dynamicRules);
         const ruleIds = dynamicRules.map((rule) => {
             return rule.id;
         });
@@ -89,7 +91,7 @@ importScripts('rules.js');
 
 
     function storeWhitelistedUrls(whitelist) {
-        console.log('Storing whitelisted urls: ' + whitelist);
+        console.log('Storing whitelisted urls: ' + JSON.stringify(whitelist));
         chrome.storage.local.set({ 'whitelist': whitelist });
     }
 
