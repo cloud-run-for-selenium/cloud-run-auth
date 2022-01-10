@@ -42,6 +42,10 @@ const server = https.createServer(options, function (req, res) {
 
                 // });
                 res.end(JSON.stringify(responseData));
+            }).catch((e) => { 
+                console.error('something went wrong ' + e); 
+                res.writeHead(500);
+                res.end(JSON.stringify({ status: 500, errorMessage: e }));
             });
         }
     } else {

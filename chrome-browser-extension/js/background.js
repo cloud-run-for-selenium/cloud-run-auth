@@ -4,7 +4,7 @@ importScripts('rules.js');
 // background.js
 (async function () {
 
-    const TOKEN_MAX_AGE_BEFORE_REFRESH = 1200000;
+    const TOKEN_MAX_AGE_BEFORE_REFRESH = 30000;
     const REFRESH_PERIOD = parseInt(TOKEN_MAX_AGE_BEFORE_REFRESH / 60000) + 1;
 
     chrome.alarms.getAll().then((alarms) => {

@@ -136,9 +136,11 @@
 
             const rules = rulesModule.generateDynamicRules(whitelist);
             expect(rules.length).toEqual(2);
-            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---)+test.com');
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---|iii---|jjj---|kkk---|lll---|mmm---)+test.com');
+            expect(rules[0].condition.regexFilter.length).toBeLessThan(112);
             expect(rules[0].id).toEqual(1);
-            expect(rules[1].condition.regexFilter).toEqual('.*://(?:iii---|jjj---|kkk---|lll---|mmm---|nnn---)+test.com');
+            expect(rules[1].condition.regexFilter).toEqual('.*://(?:nnn---)+test.com');
+            expect(rules[1].condition.regexFilter.length).toBeLessThan(112);
             expect(rules[1].id).toEqual(2);
         });
 
@@ -153,13 +155,13 @@
             expect(whitelist['test.com']).toContain('nnn---');
 
             const rules = rulesModule.generateDynamicRules(whitelist);
-            expect(rules.length).toEqual(3);
-            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---)+test.com');
+            expect(rules.length).toEqual(2);
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---|iii---|jjj---|kkk---|lll---|mmm---)+test.com');
             expect(rules[0].id).toEqual(1);
-            expect(rules[1].condition.regexFilter).toEqual('.*://(?:iii---|jjj---|kkk---|lll---|mmm---|nnn---|ooo---|ppp---)+test.com');
+            expect(rules[1].condition.regexFilter).toEqual('.*://(?:vvv---|uuu---|ttt---|sss---|rrr---|qqq---|ppp---|ooo---|nnn---)+test.com');
             expect(rules[1].id).toEqual(2);
-            expect(rules[2].condition.regexFilter).toEqual('.*://(?:qqq---|rrr---|sss---|ttt---|uuu---|vvv---)+test.com');
-            expect(rules[2].id).toEqual(3);
+            // expect(rules[2].condition.regexFilter).toEqual('.*://(?:)+test.com');
+            // expect(rules[2].id).toEqual(3);
         });
 
         it('should build three Dynamic Rules for the same url with 8, 6, revision urls and a different url', function () {
@@ -176,9 +178,9 @@
 
             const rules = rulesModule.generateDynamicRules(whitelist);
             expect(rules.length).toEqual(3);
-            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---)+test.com');
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---|iii---|jjj---|kkk---|lll---|mmm---)+test.com');
             expect(rules[0].id).toEqual(1);
-            expect(rules[1].condition.regexFilter).toEqual('.*://(?:iii---|jjj---|kkk---|lll---|mmm---|nnn---)+test.com');
+            expect(rules[1].condition.regexFilter).toEqual('.*://(?:nnn---)+test.com');
             expect(rules[1].id).toEqual(2);
             expect(rules[2].condition.regexFilter).toEqual('.*://(?:)+example.com');
             expect(rules[2].id).toEqual(3);
@@ -195,12 +197,12 @@
             expect(whitelist['test.com']).toContain('ggg---');
             expect(whitelist['test.com']).toContain('nnn---');
             expect(whitelist['example.com'].length).toEqual(1);
-
+//whitelist['test.com'].push('zzz---')
             const rules = rulesModule.generateDynamicRules(whitelist);
             expect(rules.length).toEqual(3);
-            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---)+test.com');
+            expect(rules[0].condition.regexFilter).toEqual('.*://(?:aaa---|bbb---|ccc---|ddd---|eee---|fff---|ggg---|hhh---|iii---|jjj---|kkk---|lll---|mmm---)+test.com');
             expect(rules[0].id).toEqual(1);
-            expect(rules[1].condition.regexFilter).toEqual('.*://(?:iii---|jjj---|kkk---|lll---|mmm---|nnn---)+test.com');
+            expect(rules[1].condition.regexFilter).toEqual('.*://(?:nnn---)+test.com');
             expect(rules[1].id).toEqual(2);
             expect(rules[2].condition.regexFilter).toEqual('.*://(?:)+example.com');
             expect(rules[2].id).toEqual(3);
@@ -226,7 +228,112 @@
         });
     });
 
+    describe('Tests taking into account max regexFilter length of 111', () => {
+
+        it('should not have regexFilter.length greater than 111', () => {
+            const belowBoundary = '.*://(?:qpv---|zoo---|hello---|car---|pavg---|ba---|qa---|gdirew-g---)+abcde-fgh-ijkl-mnopqrstuv-wx.a.run.app/*';
+            const aboveBoundary = '.*://(?:qpv---|zoo---|hello---|car---|pavg---|ba---|qa---|gdirew-gf---)+abcde-fgh-ijkl-mnopqrstuv-wx.a.run.app/*';
+            expect(belowBoundary.length).toEqual(111);
+            expect(aboveBoundary.length).toEqual(112);
+        })
+
+        xit('should split if regexFilter strings are greater than or equal to boundary length 112', () => {
+            const whitelistAbove = {
+                'abcde-fgh-ijkl-mnopqrstuv-wx.a.run.app/*': [
+                    'qpv---', 'zoo---', 'hello---', 'car---', 'pavg---', 'ba---', 'qa---',
+                    'gdireq-gr---'
+                ]
+            }
+
+            const rulesAbove = rulesModule.generateDynamicRules(whitelistAbove);
+            console.log(rulesAbove);
+            expect(rulesAbove.length).toEqual(2);
+            //expect(rulesAbove[0].condition.regexFilter.length).toEqual(112);
+        });
+
+        it('should put all in one group if regexFilter boundary length of 111', () => {
+            const whitelistBelow = {
+                'abcde-fgh-ijkl-mnopqrstuv-wx.a.run.app/*': [
+                    'qpv---', 'zoo---', 'hello---', 'car---', 'pavg---', 'ba---', 'qa---',
+                    'gdireq-g---'
+                ]
+            }
+
+            const rulesBelow = rulesModule.generateDynamicRules(whitelistBelow);
+            console.log(rulesBelow);
+            expect(rulesBelow.length).toEqual(1);
+            expect(rulesBelow[0].condition.regexFilter.length).toEqual(111);
+        });
+
+        it('should generate a single group', () => {
+            const groups = [{
+                revisionUrls: [
+                    'qpv---', 'zoo---', 'hello---', 'car---', 'pavg---', 'ba---', 'qa---',
+                    'gdireq-gr---', 'qpa---', 'zog---', 'herro---'
+                ],
+                domain: 'abcde-fgh-ijkl-mnopqrstuv-wx.a.run.app/*'
+            }];
+
+            const groupsActual = [{
+                revisionUrls: [
+                    'qpv---', 'zoo---', 'hello---', 'car---', 'pavg---', 'ba---', 'qa---',
+                    'gdireq-gr---', 'qpa---', 'zog---', 'herro---'
+                ],
+                domain: 'abcde-fgh-ijkl-mnopqrstuv-wx.a.run.app/*'
+            }];
+
+            const resultsArr = rulesModule.getRegexs(groupsActual);
+            const results = resultsArr.toString();
+
+            groups[0].revisionUrls.forEach((revisionUrl) => {
+                expect(results).toContain(revisionUrl);
+            });
+        });
+
+        it('should handle a bigger group', () => {
+            const groups = [{
+                revisionUrls: [
+                    'alc---', 'froafd---', 'helloworld---', 'cartoon---', 'pavgood---', 'bach---', 'qa---',
+                    'gowok---', 'qpa---', 'zog---', 'gwibtadfsf---', 'qwvieht---', 'qputbh---', 'qpo---',
+                    'pbo---', 'qob---', 'get---', 'qantum---', 'qwerty---', 'obstr---', 'afjkl---', 'ibt---'
+                ],
+                domain: 'abcde-fgh-ijkl-mnopqrstuv-wx.a.run.app/*'
+            }];
+
+            const groupsActual = [{
+                revisionUrls: [
+                    'alc---', 'froafd---', 'helloworld---', 'cartoon---', 'pavgood---', 'bach---', 'qa---',
+                    'gowok---', 'qpa---', 'zog---', 'gwibtadfsf---', 'qwvieht---', 'qputbh---', 'qpo---',
+                    'pbo---', 'qob---', 'get---', 'qantum---', 'qwerty---', 'obstr---', 'afjkl---', 'ibt---'
+                ],
+                domain: 'abcde-fgh-ijkl-mnopqrstuv-wx.a.run.app/*'
+            }];
+
+            const resultsArr = rulesModule.getRegexs(groupsActual);
+            expect(resultsArr[0].length).toEqual(4);
+
+            const results = resultsArr.toString();
+
+            groups[0].revisionUrls.forEach((revisionUrl) => {
+                console.log(revisionUrl);
+                expect(results).toContain(revisionUrl);
+            });
+        });
+
+        it('should take a whitelist and return the dynamicRules', () => {
+            const whitelist = {
+                'abcde-fgh-ijkl-mnopqrstuv-wx.a.run.app/*': ['alc---', 'froafd---', 'helloworld---', 'cartoon---', 'pavgood---', 'bach---', 'qa---',
+                    'gowok---', 'qpa---', 'zog---', 'gwibtadfsf---', 'qwvieht---', 'qputbh---', 'qpo---',
+                    'pbo---', 'qob---', 'get---', 'qantum---', 'qwerty---', 'obstr---', 'afjkl---', 'ibt---'],
+                'lmnop-fgh-ijkl-zxcvbnfdfd-wx.a.run.app/*': ['qpv---', 'zoo---', 'hello---', 'car---', 'pavg---', 'ba---', 'qa---',
+                    'gdireq-gr---', 'qpa---', 'zog---', 'herro---']
+            };
 
 
+
+
+
+        });
+    });
 
 })();

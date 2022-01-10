@@ -17,6 +17,12 @@ function execute(cmd, stdoutEnabled) {
                 resolve(output);
             });
 
+        if (process.stderr)
+            process.stderr.on('data', (output) => {
+                console.error(output);
+                reject(output);
+            });
+
         process.on('close', (code) => {
             if (code !== 0)
                 reject(code);
